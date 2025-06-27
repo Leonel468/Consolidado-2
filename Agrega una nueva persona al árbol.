@@ -1,0 +1,43 @@
+public:
+    ArbolGenealogico() : raiz(NULL) {}
+
+    ~ArbolGenealogico() {
+        destruirArbol(raiz);
+    }
+
+    // Agrega una nueva persona al árbol.
+    void insertar(string nombre, int edad, int generacion) {
+        raiz = insertarRecursivo(raiz, nombre, edad, generacion);
+        cout << "Persona insertada.\n";
+    }
+
+    // Retorna verdadero si la persona existe en el árbol.
+    bool buscar(string nombre) {
+        return buscarRecursivo(raiz, nombre);
+    }
+
+    // Elimina a la persona si está en el árvol.
+    void eliminar(string nombre) {
+        if (buscar(nombre)) {
+            raiz = eliminarRecursivo(raiz, nombre);
+            cout << "Persona eliminada.\n";
+        } else {
+            cout << "No se encontró a la persona.\n";
+        }
+    }
+
+    // Muestra recorrido inorden.
+    void mostrarInOrden() {
+        if (raiz == NULL)
+            cout << "Árbol vacío.\n";
+        else
+            inOrdenRecursivo(raiz);
+    }
+
+    // Muestra recorrido preorden.
+    void mostrarPreOrden() {
+        if (raiz == NULL)
+            cout << "Árbol vacío.\n";
+        else
+            preOrdenRecursivo(raiz);
+    }
