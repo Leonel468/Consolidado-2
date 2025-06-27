@@ -1,0 +1,30 @@
+ Persona* eliminarRecursivo(Persona* nodo, string nombre) {
+        if (nodo == NULL)
+            return nodo;
+
+        if (nombre < nodo->nombre) {
+            nodo->izquierdo = eliminarRecursivo(nodo->izquierdo, nombre);
+        } else if (nombre > nodo->nombre) {
+            nodo->derecho = eliminarRecursivo(nodo->derecho, nombre);
+        } else {
+            // Caso 1: sin hijos o un solo hijo
+            if (nodo->izquierdo == NULL) {
+                Persona* temp = nodo->derecho;
+                delete nodo;
+                return temp;
+            } else if (nodo->derecho == NULL) {
+                Persona* temp = nodo->izquierdo;
+                delete nodo;
+                return temp;
+            }
+
+            // Caso 2: dos hijos, reemplasar por el menor del subárbol derecho
+            Persona* temp = encontrarMinimo(nodo->derecho);
+            nodo->nombre = temp->nombre;
+            nodo->edad = temp->edad;
+            nodo->generacion = temp->generacion;
+            nodo->derecho = eliminarRecursivo(nodo->derecho, temp->nombre);
+        }
+
+        return nodo;
+    }
