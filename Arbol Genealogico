@@ -1,0 +1,266 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Persona {
+    string nombre;
+    int edad;
+    int generacion;
+    Persona* izquierdo;
+    Persona* derecho;
+    
+    Persona(string n, int e, int g) : nombre(n), edad(e), generacion(g), izquierdo(NULL), derecho(NULL) {}
+};
+
+class ArbolGenealogico {
+private:
+    Persona* raiz;
+    
+    Persona* insertarRecursivo(Persona* nodo, string nombre, int edad, int generacion) {
+        if (nodo == NULL) {
+            return new Persona(nombre, edad, generacion);
+        }
+        
+        if (nombre < nodo->nombre) {
+            nodo->izquierdo = insertarRecursivo(nodo->izquierdo, nombre, edad, generacion);
+        } else {
+            nodo->derecho = insertarRecursivo(nodo->derecho, nombre, edad, generacion);
+        }
+        
+        return nodo;
+    }
+    
+    bool buscarRecursivo(Persona* nodo, string nombre) {
+        if (nodo == NULL) {
+            return false;
+        }
+        
+        if (nombre == nodo->nombre) {
+            return true;
+        }
+        
+        if (nombre < nodo->nombre) {
+            return buscarRecursivo(nodo->izquierdo, nombre);
+        } else {
+            return buscarRecursivo(nodo->derecho, nombre);
+        }
+    }
+    
+    void inOrdenRecursivo(Persona* nodo) {
+        if (nodo != NULL) {
+            inOrdenRecursivo(nodo->izquierdo);
+            cout << "Nombre: " << nodo->nombre << ", Edad: " << nodo->edad 
+                 << ", Generación: " << nodo->generacion << endl;
+            inOrdenRecursivo(nodo->derecho);
+        }
+    }
+    
+    void preOrdenRecursivo(Persona* nodo) {
+        if (nodo != NULL) {
+            cout << "Nombre: " << nodo->nombre << ", Edad: " << nodo->edad 
+                 << ", Generación: " << nodo->generacion << endl;
+            preOrdenRecursivo(nodo->izquierdo);
+            preOrdenRecursivo(nodo->derecho);
+        }
+    }
+    
+    void postOrdenRecursivo(Persona* nodo) {
+        if (nodo != NULL) {
+            postOrdenRecursivo(nodo->izquierdo);
+            postOrdenRecursivo(nodo->derecho);
+            cout << "Nombre: " << nodo->nombre << ", Edad: " << nodo->edad 
+                 << ", Generación: " << nodo->generacion << endl;
+        }
+    }
+    
+    Persona* encontrarMinimo(Persona* nodo) {
+        while (nodo->izquierdo != NULL) {
+            nodo = nodo->izquierdo;
+        }
+        return nodo;
+    }
+    
+    Persona* eliminarRecursivo(Persona* nodo, string nombre) {
+        if (nodo == NULL) {
+            return nodo;
+        }
+        
+        if (nombre < nodo->nombre) {
+            nodo->izquierdo = eliminarRecursivo(nodo->izquierdo, nombre);
+        } else if (nombre > nodo->nombre) {
+            nodo->derecho = eliminarRecursivo(nodo->derecho, nombre);
+        } else {
+            if (nodo->izquierdo == NULL) {
+                Persona* temp = nodo->derecho;
+                delete nodo;
+                return temp;
+            } else if (nodo->derecho == NULL) {
+                Persona* temp = nodo->izquierdo;
+                delete nodo;
+                return temp;
+            }
+            
+            Persona* temp = encontrarMinimo(nodo->derecho);
+            nodo->nombre = temp->nombre;
+            nodo->edad = temp->edad;
+            nodo->generacion = temp->generacion;
+            nodo->derecho = eliminarRecursivo(nodo->derecho, temp->nombre);
+        }
+        return nodo;
+    }
+
+    void destruirArbol(Persona* nodo) {
+        if (nodo != NULL) {
+            destruirArbol(nodo->izquierdo);
+            destruirArbol(nodo->derecho);
+            delete nodo;
+        }
+    }
+
+public:
+    ArbolGenealogico() : raiz(NULL) {}
+    
+    ~ArbolGenealogico() {
+        destruirArbol(raiz);
+    }
+    
+    void insertar(string nombre, int edad, int generacion) {
+        raiz = insertarRecursivo(raiz, nombre, edad, generacion);
+        cout << "Persona insertada correctamente." << endl;
+    }
+    
+    bool buscar(string nombre) {
+        return buscarRecursivo(raiz, nombre);
+    }
+    
+    void eliminar(string nombre) {
+        if (buscar(nombre)) {
+            raiz = eliminarRecursivo(raiz, nombre);
+            cout << "Persona eliminada correctamente." << endl;
+        } else {
+            cout << "Persona no encontrada." << endl;
+        }
+    }
+    
+    void mostrarInOrden() {
+        cout << "\n=== Recorrido In-Orden (Orden Alfabético) ===" << endl;
+        if (raiz == NULL) {
+            cout << "El árbol está vacío." << endl;
+        } else {
+            inOrdenRecursivo(raiz);
+        }
+    }
+    
+    void mostrarPreOrden() {
+        cout << "\n=== Recorrido Pre-Orden (Raíz Primero) ===" << endl;
+        if (raiz == NULL) {
+            cout << "El árbol está vacío." << endl;
+        } else {
+            preOrdenRecursivo(raiz);
+        }
+    }
+    
+    void mostrarPostOrden() {
+        cout << "\n=== Recorrido Post-Orden (Hojas Primero) ===" << endl;
+        if (raiz == NULL) {
+            cout << "El árbol está vacío." << endl;
+        } else {
+            postOrdenRecursivo(raiz);
+        }
+    }
+    
+    void mostrarArbol() {
+        mostrarInOrden();
+    }
+};
+
+void mostrarMenu() {
+    cout << "\n========================================" << endl;
+    cout << "       ÁRBOL GENEALÓGICO ANCESTRAL" << endl;
+    cout << "========================================" << endl;
+    cout << "1. Insertar nueva persona" << endl;
+    cout << "2. Buscar persona" << endl;
+    cout << "3. Eliminar persona" << endl;
+    cout << "4. Mostrar árbol (In-Orden)" << endl;
+    cout << "5. Mostrar árbol (Pre-Orden)" << endl;
+    cout << "6. Mostrar árbol (Post-Orden)" << endl;
+    cout << "7. Salir" << endl;
+    cout << "========================================" << endl;
+    cout << "Seleccione una opción: ";
+}
+
+int main() {
+    ArbolGenealogico arbol;
+    int opcion;
+    string nombre;
+    int edad, generacion;
+    
+    cout << "¡Bienvenido al Sistema de Árbol Genealógico!" << endl;
+    cout << "Este sistema permite gestionar información de una civilización ancestral." << endl;
+    
+    do {
+        mostrarMenu();
+        cin >> opcion;
+        
+        switch(opcion) {
+            case 1:
+                cout << "\n--- Insertar Nueva Persona ---" << endl;
+                cout << "Ingrese el nombre: ";
+                cin.ignore();
+                getline(cin, nombre);
+                cout << "Ingrese la edad: ";
+                cin >> edad;
+                cout << "Ingrese la generación: ";
+                cin >> generacion;
+                arbol.insertar(nombre, edad, generacion);
+                break;
+                
+            case 2:
+                cout << "\n--- Buscar Persona ---" << endl;
+                cout << "Ingrese el nombre a buscar: ";
+                cin.ignore();
+                getline(cin, nombre);
+                if (arbol.buscar(nombre)) {
+                    cout << "Persona encontrada en el árbol genealógico." << endl;
+                } else {
+                    cout << "Persona no encontrada." << endl;
+                }
+                break;
+                
+            case 3:
+                cout << "\n--- Eliminar Persona ---" << endl;
+                cout << "Ingrese el nombre a eliminar: ";
+                cin.ignore();
+                getline(cin, nombre);
+                arbol.eliminar(nombre);
+                break;
+                
+            case 4:
+                arbol.mostrarInOrden();
+                break;
+                
+            case 5:
+                arbol.mostrarPreOrden();
+                break;
+                
+            case 6:
+                arbol.mostrarPostOrden();
+                break;
+                
+            case 7:
+                cout << "\n¡Gracias por usar el Sistema de Árbol Genealógico!" << endl;
+                cout << "¡Hasta pronto!" << endl;
+                break;
+                
+            default:
+                cout << "Opción no válida. Por favor, seleccione una opción del 1 al 7." << endl;
+        }
+        
+        if (opcion != 7) {
+            cout << "\nPresione Enter para continuar...";
+            cin.ignore();
+            cin.get();
+        }
+        
+    } while (opcion != 7);
+}
