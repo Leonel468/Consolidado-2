@@ -1,0 +1,16 @@
+// Método privado para gestión de memoria
+private:
+    // Libera la memoria usada por el árbol.
+    void destruirArbol(Persona* nodo) {
+        if (nodo != NULL) {
+            destruirArbol(nodo->izquierdo);
+            destruirArbol(nodo->derecho);
+            delete nodo;
+        }
+    }
+
+// Destructor actualizado
+public:
+    ~ArbolGenealogico() {
+        destruirArbol(raiz);
+    }
