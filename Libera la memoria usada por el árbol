@@ -1,0 +1,14 @@
+    void destruirArbol(Persona* nodo) {
+        if (nodo != NULL) {
+            destruirArbol(nodo->izquierdo);
+            destruirArbol(nodo->derecho);
+            delete nodo;
+        }
+    }
+
+public:
+    ArbolGenealogico() : raiz(NULL) {}
+
+    ~ArbolGenealogico() {
+        destruirArbol(raiz);
+    }
