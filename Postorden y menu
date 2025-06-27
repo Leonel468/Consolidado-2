@@ -1,0 +1,88 @@
+    // Muestra recorrido postorden.
+    void mostrarPostOrden() {
+        if (raiz == NULL)
+            cout << "Árbol vacío.\n";
+        else
+            postOrdenRecursivo(raiz);
+    }
+};
+
+// Menú con opciones básicas.
+void mostrarMenu() {
+    cout << "\n========= Arbol Genealoguico =========\n";
+    cout << "1. Insertar persona\n";
+    cout << "2. Buscar persona\n";
+    cout << "3. Eliminar persona\n";
+    cout << "4. Mostrar inorden\n";
+    cout << "5. Mostrar preorden\n";
+    cout << "6. Mostrar postorden\n";
+    cout << "7. Salir\n";
+    cout << "Opción: ";
+}
+
+int main() {
+    ArbolGenealogico arbol;
+    int opcion;
+    string nombre;
+    int edad, generacion;
+
+    do {
+        mostrarMenu();
+        cin >> opcion;
+
+        switch(opcion) {
+            case 1:
+                cin.ignore();
+                cout << "Nombre: ";
+                getline(cin, nombre);
+                cout << "Edad: ";
+                cin >> edad;
+                cout << "Generación: ";
+                cin >> generacion;
+                arbol.insertar(nombre, edad, generacion);
+                break;
+
+            case 2:
+                cin.ignore();
+                cout << "Nombre a buscar: ";
+                getline(cin, nombre);
+                cout << (arbol.buscar(nombre) ? "Encontrado.\n" : "No encontrado.\n");
+                break;
+
+            case 3:
+                cin.ignore();
+                cout << "Nombre a eliminar: ";
+                getline(cin, nombre);
+                arbol.eliminar(nombre);
+                break;
+
+            case 4:
+                arbol.mostrarInOrden();
+                break;
+
+            case 5:
+                arbol.mostrarPreOrden();
+                break;
+
+            case 6:
+                arbol.mostrarPostOrden();
+                break;
+
+            case 7:
+                cout << "Programa finalizado.\n";
+                break;
+
+            default:
+                cout << "Opción inválida.\n";
+        }
+
+        if (opcion != 7) {
+            cout << "Presione Enter para continuar...";
+            cin.ignore();
+            cin.get();
+        }
+
+    } while (opcion != 7);
+
+    return 0;
+}
