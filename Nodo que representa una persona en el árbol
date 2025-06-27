@@ -1,0 +1,13 @@
+struct Persona {
+    string nombre;
+    int edad;
+    int generacion;
+    Persona* izquierdo;
+    Persona* derecho;
+
+    Persona(string n, int e, int g) : nombre(n), edad(e), generacion(g), izquierdo(NULL), derecho(NULL) {}
+};
+
+class ArbolGenealogico {
+private:
+    Persona* raiz;
